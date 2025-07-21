@@ -60,7 +60,7 @@ if [ "$PRUNE" = true ]; then
     sudo docker volume prune -f
 
     # Remove specific SMS MCP server images to force complete rebuild
-    sudo docker rmi $(sudo docker images "*sms-mcp-server*" -q) 2>/dev/null || echo "No SMS MCP images found"
+    sudo docker rmi $(sudo docker images "*mobilesms_mcp*" -q) 2>/dev/null || echo "No SMS MCP images found"
 
     # Also remove any images with the project name
     sudo docker rmi $(sudo docker images "*mobilesms*" -q) 2>/dev/null || echo "No MobileSMS images found"

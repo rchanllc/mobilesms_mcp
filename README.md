@@ -110,7 +110,7 @@ curl -N -H "Accept: text/event-stream" \
 Add this MCP server to Claude CLI:
 
 ```bash
-claude mcp add -t sse sms-server http://localhost:6900/sse --sse-params '{"apiKey":"<YOUR_API_KEY_FROM_MOBILESMS.IO"}'
+claude mcp add -t sse mobilesms-server http://localhost:6900/sse --sse-params '{"apiKey":"<YOUR_API_KEY_FROM_MOBILESMS.IO"}'
 ```
 
 For production deployment, replace `http://localhost:6900` with your server URL.

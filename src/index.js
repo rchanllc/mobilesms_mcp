@@ -20,7 +20,7 @@ const axios_1 = __importDefault(require("axios"));
 class SMSMCPServer {
     constructor() {
         this.server = new index_1.Server({
-            name: 'sms-mcp-server',
+            name: 'mobilesms_mcp',
             version: '1.0.0',
         }, {
             capabilities: {

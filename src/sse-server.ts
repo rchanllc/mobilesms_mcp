@@ -46,7 +46,7 @@ class SMSMCPSSEServer {
   private createMCPServer(apiKey: string): Server {
     const server = new Server(
       {
-        name: 'sms-mcp-server',
+        name: 'mobilesms_mcp',
         version: '1.0.0',
       },
       {

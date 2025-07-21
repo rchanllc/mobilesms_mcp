@@ -22,7 +22,7 @@ class SMSMCPServer {
   constructor() {
     this.server = new Server(
       {
-        name: 'sms-mcp-server',
+        name: 'mobilesms_mcp',
         version: '1.0.0',
       },
       {

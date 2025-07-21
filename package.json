@@ -1,5 +1,5 @@
 {
-  "name": "sms-mcp-server",
+  "name": "mobilesms_mcp",
   "version": "1.0.0",
   "description": "MCP server for SMS API integration",
   "main": "dist/index.js",
@@ -12,14 +12,14 @@
     "dev:sse": "tsx watch src/sse-server.ts",
     "dev:sse:build": "npm run build && nodemon dist/sse-server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docker:build": "sudo docker build -t sms-mcp-server .",
-    "docker:run": "sudo docker run -p 6900:6900 -e SMS_API_BASE_URL=https://mobilesms.io/webapp/api.php sms-mcp-server",
+    "docker:build": "sudo docker build -t mobilesms_mcp .",
+    "docker:run": "sudo docker run -p 6900:6900 -e SMS_API_BASE_URL=https://mobilesms.io/webapp/api.php mobilesms_mcp",
     "docker:compose": "sudo docker-compose up -d",
     "docker:compose:build": "sudo docker-compose up --build -d",
-    "docker:logs": "sudo docker-compose logs -f sms-mcp-server"
+    "docker:logs": "sudo docker-compose logs -f mobilesms_mcp"
   },
   "bin": {
-    "sms-mcp-server": "dist/index.js"
+    "mobilesms_mcp": "dist/index.js"
   },
   "keywords": [
     "mcp",

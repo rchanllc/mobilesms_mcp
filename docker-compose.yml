@@ -1,7 +1,7 @@
 services:
-  sms-mcp-server:
+  mobilesms_mcp:
     build: .
-    container_name: sms-mcp-server
+    container_name: mobilesms_mcp
     restart: unless-stopped
     environment:
       - SMS_API_BASE_URL=${SMS_API_BASE_URL:-https://mobilesms.io/webapp/api.php}

@@ -100,7 +100,7 @@ curl http://localhost:6900/health
 
 ### View server logs (if using Docker)
 ```bash
-sudo docker-compose logs -f sms-mcp-server
+sudo docker-compose logs -f mobilesms_mcp
 ```
 
 ### Test the connection manually

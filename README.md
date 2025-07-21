@@ -170,6 +170,12 @@ curl http://localhost:6900/health
 curl http://localhost:6900/api/info
 ```
 
+### Swagger Documentation
+Interactive API documentation is available at:
+```
+http://localhost:6900/docs
+```
+
 ### Docker Health Checks
 Built-in Docker health checks monitor the service automatically.
 

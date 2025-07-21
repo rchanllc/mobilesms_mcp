@@ -62,7 +62,7 @@ docker-compose logs -f mobilesms_mcp
 ### HTTP Endpoint
 
 **Endpoint:** `POST /mcp`  
-**Authentication:** `X-API-Key` header or `Authorization: Bearer <key>`  
+**Authentication:** `X-API-Key` header`  
 **Content-Type:** `application/json`
 
 #### Get Balance Example:
@@ -178,10 +178,7 @@ Built-in Docker health checks monitor the service automatically.
 Use the included test scripts:
 
 ```bash
-# Test all endpoints
-./test-remote-mcp.sh
-
-# Test balance specifically
+# Test balance call
 curl -X POST \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
@@ -236,4 +233,4 @@ docker-compose logs mobilesms_mcp
 
 ## License
 
-ISC 
+MIT License - see [LICENSE](LICENSE) file for details 

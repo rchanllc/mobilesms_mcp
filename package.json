@@ -27,7 +27,7 @@
     "api"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "@types/swagger-ui-express": "^4.1.8",

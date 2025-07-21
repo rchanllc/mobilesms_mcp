@@ -1,0 +1,530 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MobileSMS.io MCP Server API",
+    "version": "1.0.0",
+    "description": "Model Context Protocol (MCP) server for SMS API integration. This server provides tools for managing SMS numbers and messages through both HTTP and SSE transports.",
+    "contact": {
+      "name": "API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://mcp.mobilesms.io",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "MCP",
+      "description": "Model Context Protocol endpoints"
+    },
+    {
+      "name": "Tools",
+      "description": "Available MCP tools"
+    },
+    {
+      "name": "Setup",
+      "description": "Configuration and setup guides"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "description": "Check if the server is running and healthy",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "server": {
+                      "type": "string",
+                      "example": "SMS MCP SSE Server"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/info": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "API information",
+        "description": "Get information about the API endpoints and usage",
+        "responses": {
+          "200": {
+            "description": "API information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string"
+                    },
+                    "endpoints": {
+                      "type": "object"
+                    },
+                    "usage": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sse": {
+      "get": {
+        "tags": ["MCP"],
+        "summary": "SSE endpoint for MCP communication",
+        "description": "Connect to this endpoint for Server-Sent Events based MCP communication. Requires apiKey query parameter for authentication. This is the recommended endpoint for Claude Code CLI integration.",
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "query",
+            "required": true,
+            "description": "Your MobileSMS.io API key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE stream established",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-Sent Events stream"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing MobileSMS.io apiKey query parameter"
+          }
+        }
+      }
+    },
+    "/tools": {
+      "get": {
+        "tags": ["Tools"],
+        "summary": "List all available MCP tools",
+        "description": "Get detailed information about all available SMS tools, their parameters, and usage examples.",
+        "responses": {
+          "200": {
+            "description": "List of available tools with examples",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tools": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Tool"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setup/claude-code-config": {
+      "get": {
+        "tags": ["Setup"],
+        "summary": "Get Claude Code CLI setup command",
+        "description": "Get the Claude Code CLI command to add this MCP server. Replace 'YOUR_SMS_API_KEY' with your actual API key.",
+        "responses": {
+          "200": {
+            "description": "Claude Code CLI setup instructions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaudeCodeSetup"
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "example": "text/plain"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setup/guide": {
+      "get": {
+        "tags": ["Setup"],
+        "summary": "Setup guide and instructions",
+        "description": "Get detailed setup instructions for both Claude Code CLI and direct API integration.",
+        "responses": {
+          "200": {
+            "description": "Setup guide and instructions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "claude_code": {
+                      "type": "object",
+                      "properties": {
+                        "command": {
+                          "type": "string"
+                        },
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "direct_api": {
+                      "type": "object",
+                      "properties": {
+                        "endpoints": {
+                          "type": "object"
+                        },
+                        "examples": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp": {
+      "post": {
+        "tags": ["MCP"],
+        "summary": "HTTP endpoint for direct MCP calls",
+        "description": "Send JSON-RPC messages to interact with the MCP server via HTTP. Requires X-API-Key header for authentication. This endpoint is useful for programmatic access and testing.",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonRpcRequest"
+              },
+              "examples": {
+                "listTools": {
+                  "summary": "List available tools",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "tools/list",
+                    "params": {}
+                  }
+                },
+                "getBalance": {
+                  "summary": "Get account balance",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": 2,
+                    "method": "tools/call",
+                    "params": {
+                      "name": "get_balance",
+                      "arguments": {}
+                    }
+                  }
+                },
+                "generateNumber": {
+                  "summary": "Generate a new SMS number",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": 3,
+                    "method": "tools/call",
+                    "params": {
+                      "name": "generate_number",
+                      "arguments": {
+                        "service": "discord",
+                        "country": "us"
+                      }
+                    }
+                  }
+                },
+                "getSMS": {
+                  "summary": "Get SMS messages",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": 4,
+                    "method": "tools/call",
+                    "params": {
+                      "name": "get_sms",
+                      "arguments": {
+                        "number": "5551234567",
+                        "service": "discord"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                },
+                "examples": {
+                  "toolsList": {
+                    "summary": "Tools list response",
+                    "value": {
+                      "jsonrpc": "2.0",
+                      "id": 1,
+                      "result": {
+                        "tools": [
+                          {
+                            "name": "generate_number",
+                            "description": "Generate a new SMS number for a specific service and country",
+                            "inputSchema": {
+                              "type": "object",
+                              "properties": {
+                                "service": {"type": "string"},
+                                "country": {"type": "string"},
+                                "zipcode": {"type": "string"}
+                              },
+                              "required": ["service", "country"]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "balanceResponse": {
+                    "summary": "Balance response",
+                    "value": {
+                      "jsonrpc": "2.0",
+                      "id": 2,
+                      "result": {
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "{\n  \"status\": 1,\n  \"balance\": \"45.67\"\n}"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or missing MobileSMS.io X-API-Key header"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "JsonRpcRequest": {
+        "type": "object",
+        "required": ["jsonrpc", "id", "method"],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": ["2.0"]
+          },
+          "id": {
+            "type": "integer"
+          },
+          "method": {
+            "type": "string",
+            "enum": ["tools/list", "tools/call"]
+          },
+          "params": {
+            "type": "object"
+          }
+        }
+      },
+      "JsonRpcResponse": {
+        "type": "object",
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": ["2.0"]
+          },
+          "id": {
+            "type": "integer"
+          },
+          "result": {
+            "type": "object"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Tool": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputSchema": {
+            "type": "object"
+          }
+        }
+      },
+      "ClaudeCodeSetup": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "example": "claude mcp add -t sse mobilesms-server \"https://mcp.mobilesms.io/sse?apiKey=YOUR_SMS_API_KEY\""
+          },
+          "description": {
+            "type": "string",
+            "example": "Run this command in your terminal to add the MobileSMS MCP server to Claude Code CLI"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "MobileSMS.io API key"
+      }
+    }
+  },
+  "x-documentation": {
+    "quickstart": {
+      "http_endpoint": {
+        "description": "Use the /mcp endpoint for direct HTTP access",
+        "example_curl": "curl -X POST https://mcp.mobilesms.io/mcp -H 'Content-Type: application/json' -H 'X-API-Key: YOUR_MOBILESMS_API_KEY' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"get_balance\",\"arguments\":{}}}'",
+        "authentication": "Pass your MobileSMS.io API key via X-API-Key header"
+      },
+      "sse_endpoint": {
+        "description": "Use the /sse endpoint for Claude Code CLI integration",
+        "url": "https://mcp.mobilesms.io/sse?apiKey=YOUR_MOBILESMS_API_KEY",
+        "usage": "Add to Claude Code CLI using: claude mcp add -t sse mobilesms-server \"https://mcp.mobilesms.io/sse?apiKey=YOUR_MOBILESMS_API_KEY\""
+      }
+    },
+    "tools": [
+      {
+        "name": "generate_number",
+        "description": "Generate a new SMS number for a specific service and country",
+        "parameters": {
+          "service": "The service name (e.g., discord, telegram, whatsapp)",
+          "country": "The country code (e.g., us, uk, ca)",
+          "zipcode": "Optional zipcode for US numbers"
+        },
+        "example": {
+          "service": "discord",
+          "country": "us",
+          "zipcode": "10001"
+        }
+      },
+      {
+        "name": "get_sms",
+        "description": "Retrieve SMS messages for a specific number and service",
+        "parameters": {
+          "number": "The phone number to check for SMS messages",
+          "service": "The service name associated with the number"
+        },
+        "example": {
+          "number": "5551234567",
+          "service": "discord"
+        }
+      },
+      {
+        "name": "get_balance",
+        "description": "Get the current account balance",
+        "parameters": {},
+        "example": {}
+      },
+      {
+        "name": "get_active_numbers",
+        "description": "Get all currently active numbers (short version)",
+        "parameters": {},
+        "example": {}
+      }
+    ],
+    "claude_code_setup": {
+      "description": "To use this MCP server with Claude Code CLI, run the following command in your terminal",
+      "command": "claude mcp add -t sse mobilesms-server \"https://mcp.mobilesms.io/sse?apiKey=YOUR_MOBILESMS_API_KEY\"",
+      "steps": [
+        "1. Get your SMS API key from your MobileSMS.io account",
+        "2. Open your terminal",
+        "3. Run the command above, replacing 'YOUR_MOBILESMS_API_KEY' with your actual MobileSMS.io API key",
+        "4. The SMS tools will now be available in your Claude Code sessions"
+      ],
+      "note": "Make sure you have Claude Code CLI installed and configured before running this command"
+    }
+  }
+}

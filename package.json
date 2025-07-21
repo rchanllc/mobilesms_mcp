@@ -1,0 +1,50 @@
+{
+  "name": "sms-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for SMS API integration",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc && cp src/swagger.json dist/swagger.json",
+    "start": "node dist/index.js",
+    "start:sse": "node dist/sse-server.js",
+    "dev": "tsx src/index.ts",
+    "dev:sse": "tsx watch src/sse-server.ts",
+    "dev:sse:build": "npm run build && nodemon dist/sse-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build": "sudo docker build -t sms-mcp-server .",
+    "docker:run": "sudo docker run -p 6900:6900 -e SMS_API_BASE_URL=https://mobilesms.io/webapp/api.php sms-mcp-server",
+    "docker:compose": "sudo docker-compose up -d",
+    "docker:compose:build": "sudo docker-compose up --build -d",
+    "docker:logs": "sudo docker-compose logs -f sms-mcp-server"
+  },
+  "bin": {
+    "sms-mcp-server": "dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "sms",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@types/swagger-ui-express": "^4.1.8",
+    "axios": "^1.9.0",
+    "cors": "^2.8.5",
+    "eventsource": "^4.0.0",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.1",
+    "typescript": "^5.8.3"
+  }
+}

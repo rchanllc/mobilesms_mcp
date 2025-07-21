@@ -1,0 +1,15 @@
+services:
+  sms-mcp-server:
+    build: .
+    container_name: sms-mcp-server
+    restart: unless-stopped
+    environment:
+      - SMS_API_BASE_URL=${SMS_API_BASE_URL:-https://mobilesms.io/webapp/api.php}
+      - NODE_ENV=production
+    ports:
+      - "6900:6900"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:6900/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 

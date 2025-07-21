@@ -20,7 +20,11 @@ A Model Context Protocol (MCP) server for SMS API integration with both SSE (Ser
 
 ## Quick Start
 
-### Development
+### Prerequisites
+- Node.js 18+ (for development)
+- Docker (for production deployment)
+
+### Installation
 
 1. **Clone and install dependencies:**
 ```bash
@@ -34,28 +38,36 @@ npm install
 echo 'SMS_API_BASE_URL=https://mobilesms.io/webapp/api.php' > .env
 ```
 
-3. **Start development server:**
+### Running the Server
+
+#### Development Mode
 ```bash
+# Start with auto-reload
 npm run dev:sse
 ```
 
-The server will start on port 6900 with auto-reload enabled.
+#### Production Mode
 
-### Production (Docker)
-
-1. **Quick deployment:**
+**Option 1: Using Docker (Recommended)**
 ```bash
+# Quick deployment
 ./deploy.sh
-```
 
-2. **Manual deployment:**
-```bash
-# Build and start containers
+# With Docker resource cleanup
+./deploy.sh --prune
+
+# Manual Docker deployment
 docker-compose up --build -d
-
-# Check logs
-docker-compose logs -f mobilesms_mcp
 ```
+
+**Option 2: Direct Node.js**
+```bash
+# Build and run
+npm run build
+npm run start:sse
+```
+
+The server will start on port 6900.
 
 ## API Usage
 
@@ -93,6 +105,16 @@ curl -N -H "Accept: text/event-stream" \
   "http://localhost:6900/sse?apiKey=YOUR_API_KEY"
 ```
 
+## Claude CLI Integration
+
+Add this MCP server to Claude CLI:
+
+```bash
+claude mcp add -t sse sms-server http://localhost:6900/sse --sse-params '{"apiKey":"<YOUR_API_KEY_FROM_MOBILESMS.IO"}'
+```
+
+For production deployment, replace `http://localhost:6900` with your server URL.
+
 ## Development Scripts
 
 ```bash
@@ -113,34 +135,6 @@ npm run docker:compose:build  # Build and start with docker-compose
 npm run docker:logs           # View logs
 ```
 
-## Production Deployment
-
-### Docker Deployment
-
-The included `docker-compose.yml` sets up:
-- SMS MCP Server on port 6900
-- Health checks and auto-restart
-
-```bash
-# Deploy with Docker
-./deploy.sh
-
-# Deploy with Docker and clean resources
-./deploy.sh --prune
-
-# Or manually
-docker-compose up --build -d
-```
-
-### Direct Deployment
-
-```bash
-# Build and run directly
-docker build -t mobilesms_mcp .
-docker run -p 6900:6900 \
-  -e SMS_API_BASE_URL=https://mobilesms.io/webapp/api.php \
-  mobilesms_mcp
-```
 
 ## Configuration
 

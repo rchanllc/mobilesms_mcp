@@ -25,7 +25,7 @@ A Model Context Protocol (MCP) server for SMS API integration with both SSE (Ser
 1. **Clone and install dependencies:**
 ```bash
 git clone <repository-url>
-cd sms-mcp-server
+cd mobilesms_mcp
 npm install
 ```
 
@@ -54,7 +54,7 @@ The server will start on port 6900 with auto-reload enabled.
 docker-compose up --build -d
 
 # Check logs
-docker-compose logs -f sms-mcp-server
+docker-compose logs -f mobilesms_mcp
 ```
 
 ## API Usage
@@ -136,10 +136,10 @@ docker-compose up --build -d
 
 ```bash
 # Build and run directly
-docker build -t sms-mcp-server .
+docker build -t mobilesms_mcp .
 docker run -p 6900:6900 \
   -e SMS_API_BASE_URL=https://mobilesms.io/webapp/api.php \
-  sms-mcp-server
+  mobilesms_mcp
 ```
 
 ## Configuration
@@ -213,7 +213,7 @@ curl -X POST \
 lsof -i :6900
 
 # Check logs
-docker-compose logs sms-mcp-server
+docker-compose logs mobilesms_mcp
 ```
 
 ### API calls failing
@@ -222,7 +222,7 @@ docker-compose logs sms-mcp-server
 curl http://localhost:6900/health
 
 # Check environment variables
-docker-compose exec sms-mcp-server env | grep SMS_API
+docker-compose exec mobilesms_mcp env | grep SMS_API
 ```
 
 ### Server access issues
@@ -231,7 +231,7 @@ docker-compose exec sms-mcp-server env | grep SMS_API
 curl http://localhost:6900/health
 
 # Check server logs
-docker-compose logs sms-mcp-server
+docker-compose logs mobilesms_mcp
 ```
 
 ## License

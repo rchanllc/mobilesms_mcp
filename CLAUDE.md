@@ -12,14 +12,6 @@ npm run start:sse         # Start production SSE server
 npm run docker:compose    # Run with Docker
 ```
 
-### Testing
-```bash
-# No automated test suite - use test scripts:
-./tests/test-balance-curl.sh    # Basic API connectivity test
-node tests/test-mcp-sse.js      # Test SSE client implementation
-./tests/test-remote-mcp.sh      # Comprehensive endpoint testing
-```
-
 ## Architecture Overview
 
 This is an MCP (Model Context Protocol) server that bridges SMS API services to AI assistants. It provides two transport mechanisms:

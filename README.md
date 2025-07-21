@@ -1,4 +1,4 @@
-# SMS MCP Server
+# MobileSMS.io MCP Server
 
 A Model Context Protocol (MCP) server for SMS API integration with both SSE (Server-Sent Events) and HTTP endpoints.
 

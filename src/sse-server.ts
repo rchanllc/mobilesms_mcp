@@ -207,14 +207,14 @@ class SMSMCPSSEServer {
       res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        server: 'SMS MCP SSE Server'
+        server: 'MobileSMS.io SMS MCP SSE Server'
       });
     });
 
     // API info endpoint
     this.app.get('/api/info', (req, res) => {
       res.json({
-        name: 'SMS MCP SSE Server',
+        name: 'MobileSMS.io SMS MCP SSE Server',
         version: '1.0.0',
         transport: 'SSE + HTTP',
         endpoints: {
@@ -706,7 +706,7 @@ class SMSMCPSSEServer {
 
   async start() {
     this.app.listen(this.port, () => {
-      console.log(`🚀 SMS MCP SSE Server running on port ${this.port}`);
+      console.log(`🚀 MobileSMS.io SMS MCP SSE Server running on port ${this.port}`);
       console.log(`📡 MCP SSE endpoint: http://localhost:${this.port}/sse?apiKey=YOUR_API_KEY`);
       console.log(`🔧 Health check: http://localhost:${this.port}/health`);
       console.log(`📚 API info: http://localhost:${this.port}/api/info`);

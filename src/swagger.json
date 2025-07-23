@@ -56,7 +56,7 @@
                     },
                     "server": {
                       "type": "string",
-                      "example": "SMS MCP SSE Server"
+                      "example": "MobileSMS.io SMS MCP SSE Server"
                     }
                   }
                 }

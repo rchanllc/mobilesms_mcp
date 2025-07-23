@@ -28,7 +28,7 @@ A Model Context Protocol (MCP) server for SMS API integration with both SSE (Ser
 
 1. **Clone and install dependencies:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/rchanllc/mobilesms_mcp.git
 cd mobilesms_mcp
 npm install
 ```

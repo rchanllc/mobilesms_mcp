@@ -1,0 +1,50 @@
+# Source files (only distribute built files)
+src/
+*.ts
+!*.d.ts
+
+# Development files
+.env
+.env.*
+*.log
+node_modules/
+.vscode/
+.idea/
+
+# Docker files
+Dockerfile
+docker-compose.yml
+deploy.sh
+.dockerignore
+
+# Documentation files not needed in package
+claude_desktop_config.json
+
+# Test files
+test/
+*.test.*
+*.spec.*
+
+# Build artifacts
+*.tsbuildinfo
+.cache/
+tmp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Development configs
+tsconfig.json
+nodemon.json
+.eslintrc.*
+.prettierrc.*

@@ -19,7 +19,10 @@
     "docker:logs": "sudo docker-compose logs -f mobilesms_mcp"
   },
   "bin": {
-    "mobilesms_mcp": "dist/index.js"
+    "mobilesms-mcp": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=20.11.1"
   },
   "keywords": [
     "mcp",

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "mobilesms": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/mobilesms_mcp/dist/index.js",
+        "--api-key",
+        "YOUR_API_KEY_HERE"
+      ],
+      "env": {
+        "SMS_API_BASE_URL": "https://mobilesms.io/webapp/api.php"
+      }
+    }
+  }
+}

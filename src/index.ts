@@ -32,12 +32,31 @@ class SMSMCPServer {
       }
     );
 
+    // Support both environment variables and command line arguments
+    const apiKey = this.getApiKey();
+    
     this.config = {
-      baseUrl: process.env.SMS_API_BASE_URL || 'https://example.com/api.php',
-      apiKey: process.env.SMS_API_KEY || '',
+      baseUrl: process.env.SMS_API_BASE_URL || 'https://mobilesms.io/webapp/api.php',
+      apiKey: apiKey,
     };
 
+    if (!this.config.apiKey) {
+      console.error('Warning: No API key provided. Set SMS_API_KEY environment variable or pass --api-key argument.');
+    }
+
     this.setupToolHandlers();
+  }
+
+  private getApiKey(): string {
+    // Check command line arguments first
+    const args = process.argv.slice(2);
+    const apiKeyIndex = args.findIndex(arg => arg === '--api-key' || arg === '-k');
+    if (apiKeyIndex !== -1 && args[apiKeyIndex + 1]) {
+      return args[apiKeyIndex + 1];
+    }
+    
+    // Fall back to environment variable
+    return process.env.SMS_API_KEY || '';
   }
 
   private setupToolHandlers() {

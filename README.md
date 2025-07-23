@@ -105,6 +105,68 @@ curl -N -H "Accept: text/event-stream" \
   "http://localhost:6900/sse?apiKey=YOUR_API_KEY"
 ```
 
+## Claude Desktop Integration
+
+### Local Installation Method
+
+1. **Clone and build the repository:**
+```bash
+git clone https://github.com/rchanllc/mobilesms_mcp.git
+cd mobilesms_mcp
+npm install
+npm run build
+```
+
+2. **Configure Claude Desktop:**
+
+**Location of Claude Desktop config:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
+**Configuration (using absolute path):**
+```json
+{
+  "mcpServers": {
+    "mobilesms": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/mobilesms_mcp/dist/index.js",
+        "--api-key",
+        "YOUR_API_KEY_HERE"
+      ],
+      "env": {
+        "SMS_API_BASE_URL": "https://mobilesms.io/webapp/api.php"
+      }
+    }
+  }
+}
+```
+
+Replace:
+- `/absolute/path/to/mobilesms_mcp` with the actual path where you cloned the repository
+- `YOUR_API_KEY_HERE` with your actual API key from mobilesms.io
+
+### Alternative: Using npm link (for development)
+
+```bash
+# In the mobilesms_mcp directory
+npm link
+
+# Then use in Claude Desktop config:
+{
+  "mcpServers": {
+    "mobilesms": {
+      "command": "mobilesms-mcp",
+      "args": ["--api-key", "YOUR_API_KEY_HERE"],
+      "env": {
+        "SMS_API_BASE_URL": "https://mobilesms.io/webapp/api.php"
+      }
+    }
+  }
+}
+```
+
 ## Claude CLI Integration
 
 Add this MCP server to Claude CLI:

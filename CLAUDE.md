@@ -39,7 +39,7 @@ The four tools (`generate_number`, `get_sms`, `get_balance`, `get_active_numbers
 ### API Authentication Flow
 
 - SSE: API key passed as query parameter: `/sse?apiKey=YOUR_KEY`
-- HTTP: API key in header: `X-API-Key: YOUR_KEY` or `Authorization: Bearer YOUR_KEY`
+- HTTP: API key in header: `X-API-Key: YOUR_KEY`
 - Each connection creates its own MCP server instance with the provided API key
 - API key is appended to all SMS API requests
 

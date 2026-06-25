@@ -15,6 +15,7 @@ import swaggerUi from 'swagger-ui-express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { TOOL_DEFS, buildParams, formatResult, toolsRestListing } from './tools.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,87 +64,19 @@ class SMSMCPSSEServer {
 
     // Setup tool handlers with the specific API key
     server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return {
-        tools: [
-          {
-            name: 'generate_number',
-            description: 'Generate a new SMS number for a specific service and country',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                service: {
-                  type: 'string',
-                  description: 'The service name (e.g., discord, telegram, whatsapp)',
-                },
-                country: {
-                  type: 'string',
-                  description: 'The country code (e.g., us, uk, ca)',
-                },
-                zipcode: {
-                  type: 'string',
-                  description: 'Optional zipcode for US numbers',
-                },
-              },
-              required: ['service', 'country'],
-            },
-          },
-          {
-            name: 'get_sms',
-            description: 'Retrieve SMS messages for a specific number and service',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                number: {
-                  type: 'string',
-                  description: 'The phone number to check for SMS messages',
-                },
-                service: {
-                  type: 'string',
-                  description: 'The service name associated with the number',
-                },
-              },
-              required: ['number', 'service'],
-            },
-          },
-          {
-            name: 'get_balance',
-            description: 'Get the current account balance',
-            inputSchema: {
-              type: 'object',
-              properties: {},
-            },
-          },
-          {
-            name: 'get_active_numbers',
-            description: 'Get all currently active numbers (short version)',
-            inputSchema: {
-              type: 'object',
-              properties: {},
-            },
-          },
-        ],
-      };
+      return { tools: TOOL_DEFS };
     });
 
     server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
       try {
-        switch (name) {
-          case 'generate_number':
-            return await this.generateNumber(config, args as any);
-          case 'get_sms':
-            return await this.getSMS(config, args as any);
-          case 'get_balance':
-            return await this.getBalance(config);
-          case 'get_active_numbers':
-            return await this.getActiveNumbers(config);
-          default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `Unknown tool: ${name}`
-            );
+        const params = buildParams(name, args);
+        if (!params) {
+          throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
         }
+        const result = await this.makeAPIRequest(config, params);
+        return formatResult(result);
       } catch (error) {
         if (error instanceof McpError) {
           throw error;
@@ -236,70 +169,9 @@ class SMSMCPSSEServer {
       });
     });
 
-    // Tools endpoint
+    // Tools endpoint (derived from the canonical tool definitions in tools.ts)
     this.app.get('/tools', (req, res) => {
-      res.json({
-        tools: [
-          {
-            name: 'generate_number',
-            description: 'Generate a new SMS number for a specific service and country',
-            parameters: {
-              service: {
-                type: 'string',
-                description: 'The service name (e.g., discord, telegram, whatsapp)',
-                required: true
-              },
-              country: {
-                type: 'string', 
-                description: 'The country code (e.g., us, uk, ca)',
-                required: true
-              },
-              zipcode: {
-                type: 'string',
-                description: 'Optional zipcode for US numbers',
-                required: false
-              }
-            },
-            example: {
-              service: 'discord',
-              country: 'us',
-              zipcode: '10001'
-            }
-          },
-          {
-            name: 'get_sms',
-            description: 'Retrieve SMS messages for a specific number and service',
-            parameters: {
-              number: {
-                type: 'string',
-                description: 'The phone number to check for SMS messages',
-                required: true
-              },
-              service: {
-                type: 'string',
-                description: 'The service name associated with the number',
-                required: true
-              }
-            },
-            example: {
-              number: '5551234567',
-              service: 'discord'
-            }
-          },
-          {
-            name: 'get_balance',
-            description: 'Get the current account balance',
-            parameters: {},
-            example: {}
-          },
-          {
-            name: 'get_active_numbers',
-            description: 'Get all currently active numbers (short version)',
-            parameters: {},
-            example: {}
-          }
-        ]
-      });
+      res.json({ tools: toolsRestListing() });
     });
 
     // Setup guide endpoint
@@ -388,94 +260,22 @@ class SMSMCPSSEServer {
             result = {
               jsonrpc: '2.0',
               id: message.id,
-              result: {
-                tools: [
-                  {
-                    name: 'generate_number',
-                    description: 'Generate a new SMS number for a specific service and country',
-                    inputSchema: {
-                      type: 'object',
-                      properties: {
-                        service: {
-                          type: 'string',
-                          description: 'The service name (e.g., discord, telegram, whatsapp)',
-                        },
-                        country: {
-                          type: 'string',
-                          description: 'The country code (e.g., us, uk, ca)',
-                        },
-                        zipcode: {
-                          type: 'string',
-                          description: 'Optional zipcode for US numbers',
-                        },
-                      },
-                      required: ['service', 'country'],
-                    },
-                  },
-                  {
-                    name: 'get_sms',
-                    description: 'Retrieve SMS messages for a specific number and service',
-                    inputSchema: {
-                      type: 'object',
-                      properties: {
-                        number: {
-                          type: 'string',
-                          description: 'The phone number to check for SMS messages',
-                        },
-                        service: {
-                          type: 'string',
-                          description: 'The service name associated with the number',
-                        },
-                      },
-                      required: ['number', 'service'],
-                    },
-                  },
-                  {
-                    name: 'get_balance',
-                    description: 'Get the current account balance',
-                    inputSchema: {
-                      type: 'object',
-                      properties: {},
-                    },
-                  },
-                  {
-                    name: 'get_active_numbers',
-                    description: 'Get all currently active numbers (short version)',
-                    inputSchema: {
-                      type: 'object',
-                      properties: {},
-                    },
-                  },
-                ],
-              }
+              result: { tools: TOOL_DEFS }
             };
             break;
 
           case 'tools/call':
             const { name, arguments: args } = message.params;
-            let toolResult;
-
-            switch (name) {
-              case 'generate_number':
-                toolResult = await this.generateNumber(config, args as any);
-                break;
-              case 'get_sms':
-                toolResult = await this.getSMS(config, args as any);
-                break;
-              case 'get_balance':
-                toolResult = await this.getBalance(config);
-                break;
-              case 'get_active_numbers':
-                toolResult = await this.getActiveNumbers(config);
-                break;
-              default:
-                throw new Error(`Unknown tool: ${name}`);
+            const callParams = buildParams(name, args);
+            if (!callParams) {
+              throw new Error(`Unknown tool: ${name}`);
             }
+            const apiResult = await this.makeAPIRequest(config, callParams);
 
             result = {
               jsonrpc: '2.0',
               id: message.id,
-              result: toolResult
+              result: formatResult(apiResult)
             };
             break;
 
@@ -605,103 +405,6 @@ class SMSMCPSSEServer {
     }
 
     return data;
-  }
-
-  private async generateNumber(config: SMSAPIConfig, args: { service: string; country: string; zipcode?: string }) {
-    const { service, country, zipcode } = args;
-
-    const params: Record<string, string> = {
-      action: 'number',
-      service: service,
-      country: country,
-    };
-
-    if (zipcode) {
-      params.zip_pass = '1';
-      params.zipcode = zipcode;
-    }
-
-    const result = await this.makeAPIRequest(config, params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
-  }
-
-  private async getSMS(config: SMSAPIConfig, args: { number: string; service: string }) {
-    const { number, service } = args;
-
-    const params = {
-      action: 'sms',
-      number: number,
-      service: service,
-    };
-
-    const result = await this.makeAPIRequest(config, params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
-  }
-
-  private async getBalance(config: SMSAPIConfig) {
-    const params = {
-      action: 'balance',
-    };
-
-    const result = await this.makeAPIRequest(config, params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
-  }
-
-  private async getActiveNumbers(config: SMSAPIConfig) {
-    const params = {
-      action: 'active_short',
-    };
-
-    const result = await this.makeAPIRequest(config, params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
   }
 
   async start() {

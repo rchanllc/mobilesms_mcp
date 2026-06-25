@@ -9,6 +9,7 @@ import {
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
 import axios from 'axios';
+import { TOOL_DEFS, buildParams, formatResult } from './tools.js';
 
 interface SMSAPIConfig {
   baseUrl: string;
@@ -61,87 +62,19 @@ class SMSMCPServer {
 
   private setupToolHandlers() {
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return {
-        tools: [
-          {
-            name: 'generate_number',
-            description: 'Generate a new SMS number for a specific service and country',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                service: {
-                  type: 'string',
-                  description: 'The service name (e.g., discord, telegram, whatsapp)',
-                },
-                country: {
-                  type: 'string',
-                  description: 'The country code (e.g., us, uk, ca)',
-                },
-                zipcode: {
-                  type: 'string',
-                  description: 'Optional zipcode for US numbers',
-                },
-              },
-              required: ['service', 'country'],
-            },
-          },
-          {
-            name: 'get_sms',
-            description: 'Retrieve SMS messages for a specific number and service',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                number: {
-                  type: 'string',
-                  description: 'The phone number to check for SMS messages',
-                },
-                service: {
-                  type: 'string',
-                  description: 'The service name associated with the number',
-                },
-              },
-              required: ['number', 'service'],
-            },
-          },
-          {
-            name: 'get_balance',
-            description: 'Get the current account balance',
-            inputSchema: {
-              type: 'object',
-              properties: {},
-            },
-          },
-          {
-            name: 'get_active_numbers',
-            description: 'Get all currently active numbers (short version)',
-            inputSchema: {
-              type: 'object',
-              properties: {},
-            },
-          },
-        ],
-      };
+      return { tools: TOOL_DEFS };
     });
 
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
       try {
-        switch (name) {
-          case 'generate_number':
-            return await this.generateNumber(args as any);
-          case 'get_sms':
-            return await this.getSMS(args as any);
-          case 'get_balance':
-            return await this.getBalance();
-          case 'get_active_numbers':
-            return await this.getActiveNumbers();
-          default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `Unknown tool: ${name}`
-            );
+        const params = buildParams(name, args);
+        if (!params) {
+          throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
         }
+        const result = await this.makeAPIRequest(params);
+        return formatResult(result);
       } catch (error) {
         if (error instanceof McpError) {
           throw error;
@@ -177,103 +110,6 @@ class SMSMCPServer {
     }
 
     return data;
-  }
-
-  private async generateNumber(args: { service: string; country: string; zipcode?: string }) {
-    const { service, country, zipcode } = args;
-
-    const params: Record<string, string> = {
-      action: 'number',
-      service: service,
-      country: country,
-    };
-
-    if (zipcode) {
-      params.zip_pass = '1';
-      params.zipcode = zipcode;
-    }
-
-    const result = await this.makeAPIRequest(params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
-  }
-
-  private async getSMS(args: { number: string; service: string }) {
-    const { number, service } = args;
-
-    const params = {
-      action: 'sms',
-      number: number,
-      service: service,
-    };
-
-    const result = await this.makeAPIRequest(params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
-  }
-
-  private async getBalance() {
-    const params = {
-      action: 'balance',
-    };
-
-    const result = await this.makeAPIRequest(params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
-  }
-
-  private async getActiveNumbers() {
-    const params = {
-      action: 'active_short',
-    };
-
-    const result = await this.makeAPIRequest(params);
-
-    // If result is already a string (raw text response), use it as-is
-    // If it's an object, stringify it for the text content
-    const textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: textContent,
-        },
-      ],
-    };
   }
 
   async run() {

@@ -13,10 +13,20 @@ A Model Context Protocol (MCP) server for SMS API integration with both SSE (Ser
 
 ## Available Tools
 
+Short-term numbers:
+
 1. **get_balance** - Get current account balance
-2. **get_active_numbers** - List all active phone numbers
+2. **get_active_numbers** - List all active short-term phone numbers
 3. **generate_number** - Generate a new SMS number for a service/country
 4. **get_sms** - Retrieve SMS messages for a specific number
+
+Long-term numbers (LTN, US only):
+
+5. **ltn_get_numbers** - List your long-term numbers (number_id, expiry, status)
+6. **ltn_rent_cost** - Quote the price to rent a US long-term number
+7. **ltn_rent** - Rent a US long-term number from account credit (instant-only)
+8. **ltn_extend** - Extend/renew an existing long-term number
+9. **ltn_get_sms** - Get received SMS history for a long-term number
 
 ## Quick Start
 

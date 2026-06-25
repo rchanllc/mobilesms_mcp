@@ -478,21 +478,19 @@
     "tools": [
       {
         "name": "generate_number",
-        "description": "Generate a new SMS number for a specific service and country",
+        "description": "Generate a new short-term SMS number for a specific service and country",
         "parameters": {
           "service": "The service name (e.g., discord, telegram, whatsapp)",
-          "country": "The country code (e.g., us, uk, ca)",
-          "zipcode": "Optional zipcode for US numbers"
+          "country": "The country code (e.g., us, uk, ca)"
         },
         "example": {
           "service": "discord",
-          "country": "us",
-          "zipcode": "10001"
+          "country": "us"
         }
       },
       {
         "name": "get_sms",
-        "description": "Retrieve SMS messages for a specific number and service",
+        "description": "Retrieve SMS messages for a specific short-term number and service",
         "parameters": {
           "number": "The phone number to check for SMS messages",
           "service": "The service name associated with the number"
@@ -510,9 +508,61 @@
       },
       {
         "name": "get_active_numbers",
-        "description": "Get all currently active numbers (short version)",
+        "description": "Get all currently active short-term numbers (short version)",
         "parameters": {},
         "example": {}
+      },
+      {
+        "name": "ltn_get_numbers",
+        "description": "List your long-term numbers (LTN) with their number_id, phone number, expiry and status",
+        "parameters": {},
+        "example": {}
+      },
+      {
+        "name": "ltn_rent_cost",
+        "description": "Get the price to rent a US long-term number before purchasing (includes any account discount). US numbers only.",
+        "parameters": {
+          "service": "\"all\" for the all-services premium number, or a specific service name",
+          "days": "Rental duration in days. Specific service: 7/14/30/60/90. \"all\": 7/30/90/180"
+        },
+        "example": {
+          "service": "all",
+          "days": 30
+        }
+      },
+      {
+        "name": "ltn_rent",
+        "description": "Rent a US long-term number, charged to account credit. Instant fulfilment only (returns out of stock with no charge if a number is not immediately available). US numbers only.",
+        "parameters": {
+          "service": "\"all\" for the all-services premium number, or a specific service name",
+          "days": "Rental duration in days. Specific service: 7/14/30/60/90. \"all\": 7/30/90/180"
+        },
+        "example": {
+          "service": "facebook",
+          "days": 30
+        }
+      },
+      {
+        "name": "ltn_extend",
+        "description": "Extend/renew one of your active US long-term numbers, charged to account credit. Refunded automatically if the renewal cannot be completed.",
+        "parameters": {
+          "number_id": "The number_id returned by ltn_rent / ltn_get_numbers",
+          "days": "Renewal length in days (7/14/30/90, depending on the number's rental type)"
+        },
+        "example": {
+          "number_id": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d",
+          "days": 30
+        }
+      },
+      {
+        "name": "ltn_get_sms",
+        "description": "Get received SMS history for one of your long-term numbers",
+        "parameters": {
+          "number_id": "The number_id returned by ltn_rent / ltn_get_numbers"
+        },
+        "example": {
+          "number_id": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d"
+        }
       }
     ],
     "claude_code_setup": {

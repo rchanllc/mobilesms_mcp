@@ -34,7 +34,17 @@ All tools follow the same pattern:
 3. Make GET request to `SMS_API_BASE_URL`
 4. Return formatted JSON response
 
-The four tools (`generate_number`, `get_sms`, `get_balance`, `get_active_numbers`) are implemented identically in both servers, just with different transport layers.
+Tool definitions and the name→query-param mapping live in a single shared module,
+`src/tools.ts` (`TOOL_DEFS`, `buildParams`, `formatResult`, `toolsRestListing`).
+Both `src/index.ts` (stdio) and `src/sse-server.ts` (SSE/HTTP) import from it, so the
+tool list and dispatch cannot drift between transports — when adding/changing a tool,
+edit `src/tools.ts` only, then `npm run build`.
+
+Tools:
+- Short-term: `generate_number`, `get_sms`, `get_balance`, `get_active_numbers`
+- Long-term (LTN, US only): `ltn_get_numbers`, `ltn_rent_cost`, `ltn_rent`,
+  `ltn_extend`, `ltn_get_sms`. `ltn_rent`/`ltn_extend` deduct from account credit and
+  are instant-only (out-of-stock with no charge if unavailable).
 
 ### API Authentication Flow
 

@@ -28,6 +28,35 @@ Long-term numbers (LTN, US only):
 8. **ltn_extend** - Extend/renew an existing long-term number
 9. **ltn_get_sms** - Get received SMS history for a long-term number
 
+## Hosted Server
+
+You don't need to run anything yourself. A public instance of this server is hosted at **https://mcp.mobilesms.io** — just bring your [mobilesms.io](https://mobilesms.io) API key.
+
+| Endpoint | URL |
+|---|---|
+| SSE | `https://mcp.mobilesms.io/sse?apiKey=YOUR_API_KEY` |
+| HTTP (JSON-RPC) | `https://mcp.mobilesms.io/mcp` (with `X-API-Key` header) |
+| Health | `https://mcp.mobilesms.io/health` |
+| API docs | `https://mcp.mobilesms.io/docs` |
+
+**Claude CLI:**
+```bash
+claude mcp add -t sse mobilesms https://mcp.mobilesms.io/sse --sse-params '{"apiKey":"YOUR_API_KEY"}'
+```
+
+**Quick check:**
+```bash
+curl https://mcp.mobilesms.io/health
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_balance","arguments":{}}}' \
+  https://mcp.mobilesms.io/mcp
+```
+
+The sections below cover running your own instance.
+
 ## Quick Start
 
 ### Prerequisites
@@ -179,13 +208,17 @@ npm link
 
 ## Claude CLI Integration
 
-Add this MCP server to Claude CLI:
+Use the hosted server:
 
 ```bash
-claude mcp add -t sse mobilesms-server http://localhost:6900/sse --sse-params '{"apiKey":"<YOUR_API_KEY_FROM_MOBILESMS.IO"}'
+claude mcp add -t sse mobilesms https://mcp.mobilesms.io/sse --sse-params '{"apiKey":"YOUR_API_KEY"}'
 ```
 
-For production deployment, replace `http://localhost:6900` with your server URL.
+Or point at a self-hosted instance:
+
+```bash
+claude mcp add -t sse mobilesms http://localhost:6900/sse --sse-params '{"apiKey":"YOUR_API_KEY"}'
+```
 
 ## Development Scripts
 

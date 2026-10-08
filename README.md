@@ -315,10 +315,14 @@ curl -X POST \
 ## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   MCP Client    │───▶│  SMS MCP Server │───▶│   SMS API       │
-│                 │    │   (Port 6900)   │    │   (mobilesms.io)│
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────┐    ┌──────────────────────┐    ┌─────────────────┐
+│   MCP Client    │───▶│    SMS MCP Server    │───▶│    SMS API      │
+│ (Claude Desktop,│    │                      │    │                 │
+│  Claude CLI...) │    │ hosted:              │    │  mobilesms.io   │
+│                 │    │  mcp.mobilesms.io    │    │  /webapp/api.php│
+│                 │    │ self-hosted:         │    │                 │
+│                 │    │  localhost:6900      │    │                 │
+└─────────────────┘    └──────────────────────┘    └─────────────────┘
 ```
 
 ## Security Features

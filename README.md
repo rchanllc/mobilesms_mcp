@@ -146,6 +146,27 @@ curl -N -H "Accept: text/event-stream" \
 
 ## Claude Desktop Integration
 
+### Hosted Server (no install)
+
+Claude Desktop launches local commands, so use [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) to bridge to the hosted SSE endpoint. Add this to your Claude Desktop config (file locations are listed below):
+
+```json
+{
+  "mcpServers": {
+    "mobilesms": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.mobilesms.io/sse?apiKey=YOUR_API_KEY_HERE"
+      ]
+    }
+  }
+}
+```
+
+Replace `YOUR_API_KEY_HERE` with your API key from mobilesms.io, then restart Claude Desktop. Requires Node.js 18+ on your machine.
+
 ### Local Installation Method
 
 1. **Clone and build the repository:**

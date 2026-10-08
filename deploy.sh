@@ -34,16 +34,10 @@ EOF
     echo "📝 Please edit .env file with your configuration"
 fi
 
-# Clean install dependencies
-echo "🧹 Cleaning node_modules..."
-rm -rf node_modules package-lock.json
-
-echo "📦 Installing dependencies..."
-npm install
-
-# Build project with proper TypeScript
-echo "🔨 Building project..."
-npx tsc && cp src/swagger.json dist/swagger.json
+# Dependencies and the TypeScript build happen inside the Docker build
+# (Dockerfile runs `npm ci` from the committed package-lock.json, then
+# `npm run build`). Nothing is installed or built on the host, so the
+# lockfile is never rewritten here and `git pull` stays conflict-free.
 
 echo "🛑 Stopping existing containers..."
 sudo docker compose down

@@ -60,7 +60,7 @@ The sections below cover running your own instance.
 ## Quick Start
 
 ### Prerequisites
-- Node.js 18+ (for development)
+- Node.js 22.23.4+ (for development)
 - Docker (for production deployment)
 
 ### Installation
